@@ -1,7 +1,6 @@
 ﻿using System;
 using System.IO;
 using System.Windows.Forms;
-using varManager.Properties;
 
 namespace varManager
 {
@@ -53,7 +52,7 @@ namespace varManager
             Properties.Settings.Default.varspath = textBoxVarspath.Text;
             Properties.Settings.Default.vampath = textBoxVamPath.Text;
             Properties.Settings.Default.Save();
-            if(!Directory.Exists(Properties.Settings.Default.varspath))
+            if (!Directory.Exists(Properties.Settings.Default.varspath))
                 Directory.CreateDirectory(Properties.Settings.Default.varspath);
             this.DialogResult = DialogResult.OK;
             this.Close();

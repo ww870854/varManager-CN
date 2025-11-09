@@ -1,15 +1,10 @@
-﻿using System;
+﻿using SimpleJSON;
+using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
-using System.Threading;
-using System.Threading.Tasks;
 using System.Windows.Forms;
-using SimpleJSON;
 using varManager.Properties;
 
 namespace varManager
@@ -19,8 +14,8 @@ namespace varManager
         private string varName;
         private string entryName;
         private List<JSONClass> listJsonPerson;
-       JSONClass jsonCoreControl;
-        
+        JSONClass jsonCoreControl;
+
         private int personOrder = 0;
         private bool ignoreGender = false;
         private string characterGender;
@@ -34,7 +29,7 @@ namespace varManager
         public List<JSONClass> saveNames;
         private List<TreeNode> atomnodes;
         private string[] poseControlIDs = { "hipControl", "pelvisControl", "chestControl", "headControl", "rHandControl", "lHandControl", "rFootControl", "lFootControl", "neckControl", "eyeTargetControl", "rNippleControl", "lNippleControl", "rElbowControl", "lElbowControl", "rKneeControl", "lKneeControl", "rToeControl", "lToeControl", "abdomenControl", "abdomen2Control", "rThighControl", "lThighControl", "rArmControl", "lArmControl", "rShoulderControl", "lShoulderControl" };
-        private string[] poseObjectIDs = { "hip", "pelvis", "rThigh", "rShin", "rFoot", "rToe", "lThigh", "lShin", "lFoot", "lToe", "LGlute", "RGlute", "abdomen", "abdomen2", "chest", "lPectoral", "rPectoral", "rCollar", "rShldr", "rForeArm", "rHand", "lCollar", "lShldr", "lForeArm", "lHand", "neck", "head"};
+        private string[] poseObjectIDs = { "hip", "pelvis", "rThigh", "rShin", "rFoot", "rToe", "lThigh", "lShin", "lFoot", "lToe", "LGlute", "RGlute", "abdomen", "abdomen2", "chest", "lPectoral", "rPectoral", "rCollar", "rShldr", "rForeArm", "rHand", "lCollar", "lShldr", "lForeArm", "lHand", "neck", "head" };
         private Dictionary<string, List<string>> parentAtoms;
         private readonly string[] sceneBaseAtoms = { "CoreControl", "PlayerNavigationPanel", "VRController", "WindowCamera" };
         public FormAnalysis()
@@ -46,7 +41,7 @@ namespace varManager
         public static string GetCharacterGender(string character)
         {
             string isMale = "Female";
-            character= character.ToLower();
+            character = character.ToLower();
             // If the peson atom is not "On", then we cant determine their gender it seems as GetComponentInChildren<DAZCharacter> just returns null
             if (character.StartsWith("male") ||
                     character.StartsWith("lee") ||
@@ -146,17 +141,18 @@ namespace varManager
             {
                 using (StreamReader sr = new StreamReader(parentAtomFilename))
                 {
-                    while (!sr.EndOfStream) { 
-                       string strParent= sr.ReadLine();
-                       string[] splitParent= strParent.Split('\t');
-                        if(splitParent.Length == 2)
+                    while (!sr.EndOfStream)
+                    {
+                        string strParent = sr.ReadLine();
+                        string[] splitParent = strParent.Split('\t');
+                        if (splitParent.Length == 2)
                         {
-                            List<string> childs= splitParent[1].Split(',').ToList();
+                            List<string> childs = splitParent[1].Split(',').ToList();
                             childs = childs.Select(child => child += ".bin").ToList();
-                            parentAtoms.Add(splitParent[0]+".bin",childs);
+                            parentAtoms.Add(splitParent[0] + ".bin", childs);
                         }
                     }
-                   
+
                 }
             }
             if (!entryName.ToLower().Contains("/scene/"))
@@ -165,11 +161,11 @@ namespace varManager
             }
 
         }
-        private void GetAtoms(string sceneFoldername,TreeNode treenodeCur )
+        private void GetAtoms(string sceneFoldername, TreeNode treenodeCur)
         {
             if (Directory.Exists(Path.Combine(sceneFoldername, "atoms")))
             {
-                foreach (string atomfolder in Directory.GetDirectories(Path.Combine(sceneFoldername, "atoms"), "*", SearchOption.TopDirectoryOnly).OrderBy(x=>Path.GetFileName(x)))
+                foreach (string atomfolder in Directory.GetDirectories(Path.Combine(sceneFoldername, "atoms"), "*", SearchOption.TopDirectoryOnly).OrderBy(x => Path.GetFileName(x)))
                 {
                     string atomtype = atomfolder.Substring(atomfolder.LastIndexOf("\\") + 1);
                     TreeNode subtreenode = treenodeCur.Nodes.Add(atomtype);
@@ -177,14 +173,14 @@ namespace varManager
                     {
                         GetAtoms(atomfolder, subtreenode);
                     }
-                   
+
                     foreach (string atomjson in Directory.GetFiles(atomfolder, "*.bin", SearchOption.TopDirectoryOnly))
                     {
 
                         atomnodes.Add(subtreenode.Nodes.Add(Path.GetFileName(atomjson)));
                         if (atomtype == "(base)CoreControl")
                         {
-                            jsonCoreControl=(JSONClass)JSONNode.LoadFromFile(atomjson);
+                            jsonCoreControl = (JSONClass)JSONNode.LoadFromFile(atomjson);
                         }
                         if (atomtype == "Person")
                         {
@@ -210,7 +206,7 @@ namespace varManager
                 }
             }
             return string.Format("{0}({1})", atomitem["id"], charGender);
-            
+
         }
 
         private void listBoxAtom_SelectedIndexChanged(object sender, EventArgs e)
@@ -220,7 +216,7 @@ namespace varManager
                 buttonLoadLook.Enabled = true;
                 if (listBoxAtom.SelectedItem.ToString().Contains("(Female)"))
                 {
-                    checkBoxGlute.Visible  = true;
+                    checkBoxGlute.Visible = true;
                     checkBoxBreast.Visible = true;
                     checkBoxIgnoreGender.Enabled = true;
                 }
@@ -229,29 +225,29 @@ namespace varManager
                     checkBoxGlute.Visible = false;
                     checkBoxBreast.Visible = false;
                     //if (listBoxAtom.SelectedItem.ToString().Contains("(Futa)"))
-                        checkBoxIgnoreGender.Enabled = true;
+                    checkBoxIgnoreGender.Enabled = true;
                     //else
                     //    checkBoxIgnoreGender.Enabled = false;
                 }
                 JSONArray storablesArray = listJsonPerson[listBoxAtom.SelectedIndex]["storables"].AsArray;
                 buttonLoadPose.Enabled = false;
-                if ( entryName.EndsWith(".json"))
-                    buttonLoadPose.Enabled = true ;
+                if (entryName.EndsWith(".json"))
+                    buttonLoadPose.Enabled = true;
                 buttonLoadPlugin.Enabled = false;
                 buttonLoadAnimation.Enabled = false;
 
-                bool foundAnime=false,foundPlugin=false;
+                bool foundAnime = false, foundPlugin = false;
                 foreach (JSONClass storablesitem in storablesArray)
                 {
                     if (foundAnime && foundPlugin) break;
-                    if (storablesitem["id"].Value.EndsWith ( "Animation") )
+                    if (storablesitem["id"].Value.EndsWith("Animation"))
                     {
                         buttonLoadAnimation.Enabled = true;
                         foundAnime = true;
                     }
-                    if (storablesitem["id"].Value== "PluginManager")
+                    if (storablesitem["id"].Value == "PluginManager")
                     {
-                        foundPlugin=true;
+                        foundPlugin = true;
                         if (storablesitem.HasKey("plugins"))
                         {
                             if (((JSONClass)storablesitem["plugins"]).Count > 0)
@@ -264,7 +260,7 @@ namespace varManager
             }
             else
             {
-                buttonLoadLook.Enabled= false;
+                buttonLoadLook.Enabled = false;
             }
         }
 
@@ -292,7 +288,7 @@ namespace varManager
                            checkBoxClothing.Checked, checkBoxSkin.Checked,
                            checkBoxBreast.Checked, checkBoxGlute.Checked);
 
-                    
+
                     labelMessage.Text = "加载外观预设完成！";
                     labelMessage.Visible = true;
                     timer1.Enabled = true;
@@ -360,23 +356,23 @@ namespace varManager
             jsonPose.Add("setUnlistedParamsToDefault", "true");
             jsonPose.Add("storables", new JSONArray());
             JSONArray storablesArray = atomitem["storables"].AsArray;
-           
+
             foreach (JSONClass storablesitem in storablesArray)
             {
                 if (storablesitem["id"].Value == "geometry")
                 {
-                    JSONClass jsonMorphsGeometry= new JSONClass();
+                    JSONClass jsonMorphsGeometry = new JSONClass();
                     jsonMorphsGeometry.Add("id", "geometry");
                     jsonMorphsGeometry.Add("morphs", storablesitem["morphs"]);
                     jsonPose["storables"].Add(jsonMorphsGeometry);
 
                 }
-                if (poseControlIDs.Contains( storablesitem["id"].Value) || poseObjectIDs.Contains(storablesitem["id"].Value))
+                if (poseControlIDs.Contains(storablesitem["id"].Value) || poseObjectIDs.Contains(storablesitem["id"].Value))
                 {
                     jsonPose["storables"].Add(storablesitem);
                 }
             }
-            
+
             SavePosePresetFile(jsonPose);
         }
         private string animationStorableIdToControlId(string id)
@@ -413,7 +409,7 @@ namespace varManager
             List<string> animationControlIds = new List<string>();
             foreach (JSONClass storablesitem in storablesArray)
             {
-                if (storablesitem["id"].Value.EndsWith("Animation") )
+                if (storablesitem["id"].Value.EndsWith("Animation"))
                 {
                     jsonAnimation["storables"].Add(storablesitem);
                     animationControlIds.Add(animationStorableIdToControlId(storablesitem["id"].Value));
@@ -430,7 +426,7 @@ namespace varManager
             SaveAnimationPresetFile(jsonAnimation);
         }
         private void SavePreset(JSONClass atomitem,
-            bool morphs = false,bool hair = false,  
+            bool morphs = false, bool hair = false,
             bool clothing = false, bool skin = false,
             bool breast = false, bool glute = false)
         {
@@ -441,7 +437,7 @@ namespace varManager
             JSONClass jsonSkin = new JSONClass();
             JSONClass jsonHair = new JSONClass();
             JSONClass jsonClothing = new JSONClass();
-            
+
 
             jsonPreset.Add("setUnlistedParamsToDefault", "false");
             jsonMorphs.Add("setUnlistedParamsToDefault", "true");
@@ -450,7 +446,7 @@ namespace varManager
             jsonSkin.Add("setUnlistedParamsToDefault", "true");
             jsonHair.Add("setUnlistedParamsToDefault", "true");
             jsonClothing.Add("setUnlistedParamsToDefault", "true");
-            
+
 
             jsonPreset.Add("storables", new JSONArray());
             jsonMorphs.Add("storables", new JSONArray());
@@ -459,15 +455,15 @@ namespace varManager
             jsonSkin.Add("storables", new JSONArray());
             jsonHair.Add("storables", new JSONArray());
             jsonClothing.Add("storables", new JSONArray());
-            
+
 
             JSONArray storablesArray = atomitem["storables"].AsArray;
-            string[] skinid = { "skin", "textures", "teeth", "tongue", "mouth", "FemaleEyelashes", "MaleEyelashes", "lacrimals" , "sclera" , "irises" };
+            string[] skinid = { "skin", "textures", "teeth", "tongue", "mouth", "FemaleEyelashes", "MaleEyelashes", "lacrimals", "sclera", "irises" };
             string[] breastid = { "BreastControl", "BreastPhysicsMesh" };
             string[] gluteid = { "GluteControl", "LowerPhysicsMesh" };
-            List<string> hairid=new List<string>();
-            List<string> clothingid=new List<string>();
-           
+            List<string> hairid = new List<string>();
+            List<string> clothingid = new List<string>();
+
 
             foreach (JSONClass storablesitem in storablesArray)
             {
@@ -510,8 +506,8 @@ namespace varManager
                     if (skin) jsonPresetGeometry.Add("character", storablesitem["character"].Value);
                     CharacterGender = GetCharacterGender(storablesitem["character"].Value);
                     jsonSkinGeometry.Add("character", storablesitem["character"]);
-                   
-                    jsonMorphsGeometry.Add("morphs",storablesitem["morphs"]);
+
+                    jsonMorphsGeometry.Add("morphs", storablesitem["morphs"]);
                     if (clothing)
                     {
                         jsonPresetGeometry.Add("clothing", storablesitem["clothing"]);
@@ -525,7 +521,7 @@ namespace varManager
                     if (storablesitem.HasKey("useAuxBreastColliders"))
                         jsonBreastGeometry.Add("useAuxBreastColliders", storablesitem["useAuxBreastColliders"]);
 
-                    
+
                     if (jsonPresetGeometry.HasKey("clothing"))
                     {
                         JSONArray temparray = jsonPresetGeometry["clothing"].AsArray;
@@ -537,12 +533,12 @@ namespace varManager
                     if (jsonPresetGeometry.HasKey("hair"))
                     {
                         JSONArray temparray = jsonPresetGeometry["hair"].AsArray;
-                        foreach(JSONClass tempid in temparray)
+                        foreach (JSONClass tempid in temparray)
                         {
-                            hairid.Add(tempid["internalId"].Value); 
+                            hairid.Add(tempid["internalId"].Value);
                         }
                     }
-                    
+
                     if (jsonClothingGeometry.HasKey("clothing"))
                     {
                         JSONArray temparray = jsonClothingGeometry["clothing"].AsArray;
@@ -579,7 +575,7 @@ namespace varManager
                         }
                     }
                 }
-               
+
                 foreach (string tempid in clothingid)
                 {
                     if (storablesitem["id"].Value.StartsWith(tempid))
@@ -614,12 +610,12 @@ namespace varManager
                         jsonPreset["storables"].Add(storablesitem);
                     }
                 }
-               
+
                 if (skinid.Contains(storablesitem["id"].Value))
                 {
                     jsonSkin["storables"].Add(storablesitem);
                 }
-                
+
                 //if (breast)
                 //{
                 if (breastid.Contains(storablesitem["id"].Value))
@@ -638,7 +634,7 @@ namespace varManager
                 // }
 
             }
-            
+
             if (skin) SaveDefaultEyeColorFile();
             if (clothing) SaveClothNakedFile();
             if (hair) SaveHairBaldFile();
@@ -648,8 +644,8 @@ namespace varManager
             //if (clothing) SaveClothingPresetFile(jsonClothing);
             //if (hair) SaveHairPresetFile(jsonHair);
             //if (skin) SaveSkinPresetFile(jsonSkin);
-           
-            if (clothing|| hair|| skin) SaveAppearancePresetFile(jsonPreset);
+
+            if (clothing || hair || skin) SaveAppearancePresetFile(jsonPreset);
 
 
         }
@@ -670,7 +666,7 @@ namespace varManager
             AddPresetResouce(type, saveName);
         }
 
-        private void AddPresetResouce(string type,string saveName )
+        private void AddPresetResouce(string type, string saveName)
         {
             JSONClass jc = new JSONClass();
             jc["type"] = type;
@@ -825,7 +821,7 @@ namespace varManager
                 sw.Write(strJns);
                 sw.Close();
             }
-            
+
             AddPresetResouce("glute", saveName.Replace('\\', '/'));
         }
         private void SavePluginPresetFile(JSONClass jsonPreset)
@@ -948,37 +944,37 @@ namespace varManager
                 }
             }
 
-            JSONClass jsonls =new JSONClass();
+            JSONClass jsonls = new JSONClass();
             jsonls["resources"] = new JSONArray();
             foreach (JSONClass jc in saveNames)
             {
                 jsonls["resources"].Add(jc);
             }
-            
+
             form1.GenLoadscenetxt(jsonls, false, depends);
         }
 
-        public void CheckedTreeViewNodes(TreeNodeCollection node, JSONArray jsonAtoms,string sceneFoldername)
+        public void CheckedTreeViewNodes(TreeNodeCollection node, JSONArray jsonAtoms, string sceneFoldername)
         {
             foreach (TreeNode n in node)
             {
                 if (n.Checked)
                 {
-                    if (n.Nodes.Count==0)
+                    if (n.Nodes.Count == 0)
                     {
                         string path = n.FullPath;
-                        path=path.Substring(path.IndexOf('\\') + 1);
-                        path=Path.Combine(sceneFoldername,"atoms", path);
+                        path = path.Substring(path.IndexOf('\\') + 1);
+                        path = Path.Combine(sceneFoldername, "atoms", path);
                         jsonAtoms.Add(JSONNode.LoadFromFile(path));
                     }
                 }
-                CheckedTreeViewNodes(n.Nodes,jsonAtoms, sceneFoldername);
+                CheckedTreeViewNodes(n.Nodes, jsonAtoms, sceneFoldername);
             }
         }
-        public void CheckedTreeViewNodes(TreeNodeCollection node, string sceneFoldername,bool atomSubscene=false)
+        public void CheckedTreeViewNodes(TreeNodeCollection node, string sceneFoldername, bool atomSubscene = false)
         {
             string pathPlugindata = Path.Combine(Settings.Default.vampath, "Custom\\PluginData\\feelfar");
-            
+
             Directory.CreateDirectory(pathPlugindata);
             foreach (TreeNode n in node)
             {
@@ -989,7 +985,7 @@ namespace varManager
                         string path = n.FullPath;
                         path = path.Substring(path.IndexOf('\\') + 1);
                         path = Path.Combine(sceneFoldername, "atoms", path);
-                        
+
                         string pathPlugindataAtom = Path.Combine(pathPlugindata, n.Text);
                         File.Copy(path, pathPlugindataAtom, true);
                         string type = atomSubscene ? "atomSubscene" : "atom";
@@ -1022,7 +1018,7 @@ namespace varManager
                 listBoxAtom.Select();
                 return;
             }
-        } 
+        }
         private void buttonLoadPose_Click(object sender, EventArgs e)
         {
             if (listBoxAtom.SelectedIndex >= 0 && listBoxAtom.SelectedIndex < listJsonPerson.Count)
@@ -1067,7 +1063,7 @@ namespace varManager
 
         private void triStateTreeViewAtoms_AfterSelect(object sender, TreeViewEventArgs e)
         {
-           
+
         }
 
         private void triStateTreeViewAtoms_AfterCheck(object sender, TreeViewEventArgs e)
@@ -1094,11 +1090,11 @@ namespace varManager
             AddToScene();
         }
 
-        private void AddToScene(bool asSubScene=false)
+        private void AddToScene(bool asSubScene = false)
         {
             string sceneFoldername = Path.Combine(Directory.GetCurrentDirectory(), "Cache",
                            Comm.ValidFileName(varName), Comm.ValidFileName(entryName.Replace('\\', '_').Replace('/', '_')));
-            
+
             string pathPlugindata = Path.Combine(Settings.Default.vampath, "Custom\\PluginData\\feelfar");
             Directory.Delete(pathPlugindata, true);
             CheckedTreeViewNodes(triStateTreeViewAtoms.Nodes, sceneFoldername, asSubScene);
@@ -1120,5 +1116,5 @@ namespace varManager
             timer1.Enabled = false;
         }
     }
-    
+
 }

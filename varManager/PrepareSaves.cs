@@ -1,14 +1,9 @@
 ﻿using ICSharpCode.SharpZipLib.Zip;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
-using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using varManager.Properties;
 
@@ -31,8 +26,8 @@ namespace varManager
             foreach (string scenefile in scenefiles)
             {
                 int pathLength = Path.Combine(Settings.Default.vampath, "Saves\\scene").Length;
-                string  scenefilename ="."+ scenefile.Substring(pathLength);
-                treeViewSaves.Nodes["nodeScenes"].Nodes.Add(scenefile,scenefilename);
+                string scenefilename = "." + scenefile.Substring(pathLength);
+                treeViewSaves.Nodes["nodeScenes"].Nodes.Add(scenefile, scenefilename);
             }
             treeViewSaves.Nodes["nodeScenes"].Checked = true;
             List<string> appearancefiles = Directory.GetFiles(Path.Combine(Settings.Default.vampath, "Saves\\Person\\appearance"), "*.json", SearchOption.AllDirectories).ToList();
@@ -80,10 +75,10 @@ namespace varManager
                 }
             }
             List<string> jsonfilesOK = new List<string>();
-            dependFiles(ref jsonfiles, ref jsonfilesOK,true);
+            dependFiles(ref jsonfiles, ref jsonfilesOK, true);
         }
 
-        private void dependFiles(ref List<string> jsonfiles, ref List<string> jsonfilesOK,bool progress=false)
+        private void dependFiles(ref List<string> jsonfiles, ref List<string> jsonfilesOK, bool progress = false)
         {
             int totlajsonfiles = jsonfiles.Count;
             labelProgress.Text = String.Format("{0}/{1}", 0, totlajsonfiles);
@@ -141,12 +136,12 @@ namespace varManager
 
             foreach (var varfile in varfiles)
             {
-                if(varfile.ToLower().EndsWith(".vap")|| varfile.ToLower().EndsWith(".json"))
+                if (varfile.ToLower().EndsWith(".vap") || varfile.ToLower().EndsWith(".json"))
                     jsonfiles.Add(varfile);
                 else
                     jsonfilesOK.Add(varfile);
             }
-           
+
             foreach (var customfile in customfiles)
             {
                 if (customfile.ToLower().EndsWith(".vap") || customfile.ToLower().EndsWith(".json"))
@@ -167,17 +162,17 @@ namespace varManager
 
         private string ReadJsonfile(string jsonfile)
         {
-            string jsonstring="";
+            string jsonstring = "";
             if (jsonfile.IndexOf(":/") > 1)
             {
                 string varName = jsonfile.Substring(0, jsonfile.IndexOf(":/"));
-                varName= form1.VarExistName(varName);
+                varName = form1.VarExistName(varName);
                 if (varName.EndsWith("$"))
                 {
                     varName = varName.Substring(0, varName.Length - 1);
                 }
                 string entryname = jsonfile.Substring(jsonfile.IndexOf(":/") + 2).Trim();
-               
+
                 string destvarfile = form1.getVarFilePath(varName);
                 if (!string.IsNullOrEmpty(destvarfile))
                 {
@@ -203,7 +198,7 @@ namespace varManager
                     }
                 }
             }
-            
+
             return jsonstring;
         }
 
@@ -216,7 +211,7 @@ namespace varManager
 
         private void buttonOutput_Click(object sender, EventArgs e)
         {
-           if(! Directory.Exists(textBoxOutputFolder.Text))
+            if (!Directory.Exists(textBoxOutputFolder.Text))
             {
                 MessageBox.Show("请选择一个现有的输出目录");
                 return;

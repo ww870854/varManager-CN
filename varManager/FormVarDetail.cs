@@ -1,12 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using varManager.Properties;
 
@@ -17,7 +12,7 @@ namespace varManager
         public string strVarName;
         public Form1 form1;
         public string strAction;
-        public Dictionary<string,string> dependencies;
+        public Dictionary<string, string> dependencies;
         public List<string> DependentVarList;
         public List<string> DependentJsonList;
         public FormVarDetail()
@@ -60,7 +55,7 @@ namespace varManager
             {
 
                 string dependentVar = (string)deprow.Cells["ColumnDependentVar"].Value;
-               
+
                 if (form1.IsVarInstalled(dependentVar))
                 {
                     deprow.DefaultCellStyle.BackColor = Color.Green;
@@ -120,7 +115,7 @@ namespace varManager
             if (dataGridViewDependentSaved.Columns[e.ColumnIndex].Name == "ColumnAction3" && e.RowIndex >= 0)
             {
                 string saved = dataGridViewDependentSaved.Rows[e.RowIndex].Cells["ColumnDependentSaved"].Value.ToString();
-                if(saved.StartsWith("\\"))
+                if (saved.StartsWith("\\"))
                     saved = saved.Substring(1);
 
                 string destsavedfile = Path.Combine(Settings.Default.vampath, saved);

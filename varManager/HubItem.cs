@@ -1,11 +1,8 @@
 ﻿using SimpleJSON;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
-using System.Data;
 using System.Drawing;
 using System.Globalization;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading.Tasks;
@@ -13,13 +10,13 @@ using System.Windows.Forms;
 
 namespace varManager
 {
-    
+
     public partial class HubItem : UserControl
     {
         private JSONClass resource;
-        private string paytype, category, title, version, tagLine, imageUrl, creatorName, creatorIcon, resource_id,download_url,packageName;
+        private string paytype, category, title, version, tagLine, imageUrl, creatorName, creatorIcon, resource_id, download_url, packageName;
         private double ratingAvg;
-        private int ratingCount,downloads;
+        private int ratingCount, downloads;
         private DateTime lastUpdated;
         private string inRepository = "";
 
@@ -40,7 +37,7 @@ namespace varManager
             bool success = false;
             try
             {
-                string reponse = Task<int>.Run(()=>GetResourceDetail(resource_id)).Result;
+                string reponse = Task<int>.Run(() => GetResourceDetail(resource_id)).Result;
                 if (string.IsNullOrEmpty(reponse)) return false;
                 JSONNode jsonResult = JSON.Parse(reponse);
                 Dictionary<string, string> varDownloadUrl = new Dictionary<string, string>();
@@ -58,8 +55,8 @@ namespace varManager
                     JSONArray dependencies = dependenciesFiles[hubFile].AsArray;
                     foreach (JSONClass dependencie in dependencies)
                     {
-                        if (!string.IsNullOrEmpty(dependencie["downloadUrl"].Value)&&!(dependencie["downloadUrl"].Value=="null"))
-                        varDownloadUrl[dependencie["filename"]] = dependencie["downloadUrl"];
+                        if (!string.IsNullOrEmpty(dependencie["downloadUrl"].Value) && !(dependencie["downloadUrl"].Value == "null"))
+                            varDownloadUrl[dependencie["filename"]] = dependencie["downloadUrl"];
                     }
                 }
                 RaiseGenLinkListFilterEvent(varDownloadUrl);
@@ -79,8 +76,8 @@ namespace varManager
             jns.Add("source", "VaM");
             jns.Add("action", "getResourceDetail");
             jns.Add("latest_image", "Y");
-            jns.Add("resource_id",  resourceid);
-             
+            jns.Add("resource_id", resourceid);
+
             var data = new StringContent(jns.ToString(), Encoding.UTF8, "application/json");
             return await GetResponse(url, data);
         }
@@ -106,7 +103,7 @@ namespace varManager
         }
         private void buttonInRepository_Click(object sender, EventArgs e)
         {
-            if (buttonInRepository.Text.Contains("Generate Download List")|| buttonInRepository.Text.Contains("Upgrade to")) 
+            if (buttonInRepository.Text.Contains("Generate Download List") || buttonInRepository.Text.Contains("Upgrade to"))
             {
                 GetResourceDetail();
             }
@@ -127,8 +124,8 @@ namespace varManager
             newEventArgs.DownloadLinks = varDownloadUrl;
             if (GenLinkList != null)
                 GenLinkList(this, newEventArgs);
-        } 
-        
+        }
+
         public delegate void GenLinkListHandle(object sender, DownloadLinkListEventArgs e);
         //Event name 
         public event GenLinkListHandle GenLinkList;
@@ -202,7 +199,7 @@ namespace varManager
                 case "In Repository":
                     buttonInRepository.BackColor = Color.DarkCyan;
                     toolTip1.SetToolTip(buttonInRepository, "您已拥有此软件包，点击在主窗口中定位它");
-                    break; 
+                    break;
                 case "Go To Download":
                     buttonInRepository.BackColor = Color.MediumOrchid;
                     toolTip1.SetToolTip(buttonInRepository, "点击将通过您的浏览器打开下载页面");
@@ -213,27 +210,27 @@ namespace varManager
                     {
                         toolTip1.SetToolTip(buttonInRepository, "将生成一个下载列表");
                     }
-                     break;
+                    break;
 
-                   
+
             }
-          
+
         }
 
         private void pictureBoxImage_Click(object sender, EventArgs e)
         {
             System.Diagnostics.Process.Start($"https://hub.virtamate.com/resources/{resource_id}/");
         }
-        void RaiseClickFilterEvent(string filterType,string payType,string category,string  creator)
+        void RaiseClickFilterEvent(string filterType, string payType, string category, string creator)
         {
             HubItemFilterEventArgs newEventArgs =
                     new HubItemFilterEventArgs();
             newEventArgs.FilterType = filterType;
             newEventArgs.PayType = payType;
-            newEventArgs.Category = category;   
-            newEventArgs.Creator = creator; 
-            if (ClickFilter!=null)
-               ClickFilter(this,newEventArgs);
+            newEventArgs.Category = category;
+            newEventArgs.Creator = creator;
+            if (ClickFilter != null)
+                ClickFilter(this, newEventArgs);
         }
 
         void RaisePackageNameEvent(string packageName)
@@ -260,7 +257,7 @@ namespace varManager
         }
 
 
-        public void SetResource(JSONClass json) 
+        public void SetResource(JSONClass json)
         {
             this.resource = json;
             this.paytype = resource["category"].Value;
@@ -283,7 +280,7 @@ namespace varManager
     }
     public class HubItemFilterEventArgs : EventArgs
     {
-        private string filterType,payType,category,creator;
+        private string filterType, payType, category, creator;
         public string FilterType { get => filterType; set => filterType = value; }
         public string PayType { get => payType; set => payType = value; }
         public string Category { get => category; set => category = value; }
@@ -291,9 +288,9 @@ namespace varManager
     }
     public class DownloadLinkListEventArgs : EventArgs
     {
-        private Dictionary<string, string>  downloadLinks;
+        private Dictionary<string, string> downloadLinks;
 
-        public Dictionary<string, string>  DownloadLinks { get => downloadLinks; set => downloadLinks = value; }
+        public Dictionary<string, string> DownloadLinks { get => downloadLinks; set => downloadLinks = value; }
     }
 
     public class GotoDownloadEventArgs : EventArgs

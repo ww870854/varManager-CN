@@ -387,9 +387,9 @@ namespace MMDLoader
                 sw.Close();
             }
             if (isTest)
-                MessageBox.Show("Test VMD : Generate loadscene file successfully！");
+                MessageBox.Show("测试 VMD : 成功生成加载场景文件！");
             else
-                MessageBox.Show("Load MMD : Generate loadscene file successfully！");
+                MessageBox.Show("加载 MMD : 成功生成加载场景文件！");
 
         }
 
@@ -463,7 +463,7 @@ namespace MMDLoader
                 sw.Write(strLS);
                 sw.Close();
             }
-            MessageBox.Show("Test HighHeel : Generate loadscene file successfully！");
+            MessageBox.Show("测试高跟鞋 : 成功生成加载场景文件！");
         }
 
         private void checkBoxLoadCamera_Click(object sender, RoutedEventArgs e)
@@ -559,7 +559,7 @@ namespace MMDLoader
                 sw.Write(strLS);
                 sw.Close();
             }
-            MessageBox.Show("Test HighHeel : Generate loadscene file successfully！");
+            MessageBox.Show("测试高跟鞋 : 成功生成加载场景文件！");
         }
 
         private void GetSaveName(string strMMDLinkPath, UserCtlPersonVMD personVMD, JSONClass jsonResouce)

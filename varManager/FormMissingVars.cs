@@ -1,13 +1,9 @@
-﻿using SimpleJSON;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Data;
 using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Text;
 using System.Text.RegularExpressions;
-using System.Threading.Tasks;
 using System.Windows.Forms;
 using varManager.Properties;
 
@@ -43,7 +39,7 @@ namespace varManager
                 foreach (string missingvar in missingVars)
                 {
                     string missingvarname = missingvar;
-                    if(missingvarname.EndsWith("$"))
+                    if (missingvarname.EndsWith("$"))
                     {
                         if (toolStripComboBoxIgnoreVersion.SelectedIndex == 1)
                         {
@@ -346,7 +342,7 @@ namespace varManager
                 string varName = varsDataGridView.Rows[e.RowIndex].Cells["dataGridViewTextBoxColumnvarName"].Value.ToString();
                 form1.LocateVar(varName);
                 form1.SelectVarInList(varName);
-               
+
                 form1.Activate();
             }
         }

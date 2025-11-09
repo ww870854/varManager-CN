@@ -6,7 +6,6 @@ using System.Data;
 using System.Drawing;
 using System.IO;
 using System.Linq;
-using System.Threading;
 using System.Windows.Forms;
 using varManager.Properties;
 using static DragNDrop.DragAndDropListView;
@@ -72,10 +71,10 @@ namespace varManager
             panelImage.Dock = DockStyle.Fill;
             comboBoxOrderBy.SelectedIndex = 0;
             progressBar1.Visible = true;
-            chklistLocation.SetItemChecked(0,true);
+            chklistLocation.SetItemChecked(0, true);
             chklistLocation.SetItemChecked(1, true);
             chklistLocation.SetItemChecked(3, true);
-            checkedListBoxHideFav.SetItemChecked(0,true);
+            checkedListBoxHideFav.SetItemChecked(0, true);
             checkedListBoxHideFav.SetItemChecked(1, true);
             checkedListBoxHideFav.SetItemChecked(2, true);
 
@@ -214,8 +213,8 @@ namespace varManager
             }
             this.varManagerDataSet.scenesView.AcceptChanges();
 
-            List<SaveScene> savescenes=new List<SaveScene>();
-            foreach(SaveScene ss in SaveScenes("scenes", "Saves\\scene", "*.json"))
+            List<SaveScene> savescenes = new List<SaveScene>();
+            foreach (SaveScene ss in SaveScenes("scenes", "Saves\\scene", "*.json"))
             {
                 savescenes.Add(ss);
             }
@@ -254,11 +253,11 @@ namespace varManager
             foreach (SaveScene ss in SaveScenes("hairstyle", "Custom\\Hair", "*.vap"))
             {
                 savescenes.Add(ss);
-            } 
+            }
             foreach (SaveScene ss in SaveScenes("morphs", "Custom\\Atom\\Person\\Morphs", "*.vap"))
             {
                 savescenes.Add(ss);
-            } 
+            }
             foreach (SaveScene ss in SaveScenes("skin", "Custom\\Atom\\Person\\Skin", "*.vap"))
             {
                 savescenes.Add(ss);
@@ -277,7 +276,7 @@ namespace varManager
             progressBar1.Visible = false;
         }
 
-        private static List<SaveScene> SaveScenes(string strType,string strPath,string searchPattern)
+        private static List<SaveScene> SaveScenes(string strType, string strPath, string searchPattern)
         {
             List<SaveScene> savescenes = new List<SaveScene>();
             DirectoryInfo dirinfoscenes = new DirectoryInfo(Path.Combine(Settings.Default.vampath, strPath));
@@ -345,7 +344,7 @@ namespace varManager
             {
                 if (!string.IsNullOrEmpty(strCategory))
                     listFilterScene1 = this.varManagerDataSet.scenesView.Where(q => q.atomType == strCategory).ToList();
-                
+
                 List<string> locations = new List<string>();
                 foreach (var locationitem in chklistLocation.CheckedItems)
                 {
@@ -402,7 +401,7 @@ namespace varManager
 
             if (!string.IsNullOrEmpty(creatorname) && creatorname != "____ALL")
             {
-                listFilterCreatorScene = listFilterScene3.Where(q => q.varName.StartsWith(creatorname+".")).ToList();
+                listFilterCreatorScene = listFilterScene3.Where(q => q.varName.StartsWith(creatorname + ".")).ToList();
             }
             else
             {
@@ -632,7 +631,7 @@ namespace varManager
                 {
                     string varName = listFilterCreatorSceneNormal[itemindex].varName;
                     string scene = listFilterCreatorSceneNormal[itemindex].scenePath;
-                    SetHideFav(varName, scene,-1);
+                    SetHideFav(varName, scene, -1);
                     UpdateHidefav(varName, scene);
                 }
                 //UpdateFileHidefav();
@@ -641,7 +640,7 @@ namespace varManager
             }
         }
 
-        private static void SetHideFav(string varName, string scene,int hidefav)
+        private static void SetHideFav(string varName, string scene, int hidefav)
         {
             string scenepath = Path.GetDirectoryName(scene);
             string scenename = Path.GetFileName(scene);
@@ -735,7 +734,7 @@ namespace varManager
 
         private void listView_ItemActivate(object sender, EventArgs e)
         {
-            ListView listView=(ListView)sender;
+            ListView listView = (ListView)sender;
             if (listView.SelectedIndices.Count == 1)
             {
                 panelImage.Parent = listView;
@@ -903,7 +902,7 @@ namespace varManager
             bool merge = false;
             if (checkBoxMerge.Checked) merge = true;
             bool ignoreGender = false;
-            if(checkBoxIgnoreGender.Checked) ignoreGender = true;
+            if (checkBoxIgnoreGender.Checked) ignoreGender = true;
             string characterGender = "unknown";
             if (checkBoxForMale.Visible)
             {
@@ -921,7 +920,7 @@ namespace varManager
             }
             panelImage.Visible = false;
             Cursor = Cursors.WaitCursor;
-            
+
             JSONArray resources = jsonLoadScene["resources"].AsArray;
             string saveName = "";
 
@@ -930,7 +929,7 @@ namespace varManager
                 JSONClass resource = (JSONClass)resources[0];
                 saveName = resource["saveName"].Value;
             }
-            
+
             form1.LoadScene(jsonLoadScene, merge, ignoreGender, characterGender, personOrder);
             Cursor = Cursors.Arrow;
             UpdateButtonClearCache();
@@ -969,11 +968,11 @@ namespace varManager
 
         private void buttonLocate_Click(object sender, EventArgs e)
         {
-            
+
             JSONArray resources = jsonLoadScene["resources"].AsArray;
             JSONClass resource = (JSONClass)resources[resources.Count - 1];
             string varName = resource["saveName"];
-            
+
             if (varName.IndexOf(":/") > 0)
             {
                 varName = varName.Substring(0, varName.IndexOf(":/"));
@@ -983,7 +982,7 @@ namespace varManager
             }
             else
             {
-                varName = Path.Combine(Settings.Default.vampath, varName.Replace('/','\\'));
+                varName = Path.Combine(Settings.Default.vampath, varName.Replace('/', '\\'));
                 Comm.LocateFile(varName);
             }
         }
@@ -1059,7 +1058,7 @@ namespace varManager
         private void listViewNormal_RetrieveVirtualItem(object sender, RetrieveVirtualItemEventArgs e)
         {
 
-            var curpriviewscene = listFilterCreatorSceneNormal[e.ItemIndex]; 
+            var curpriviewscene = listFilterCreatorSceneNormal[e.ItemIndex];
             RetrieveVirtualItem(e, curpriviewscene);
         }
 
@@ -1100,7 +1099,7 @@ namespace varManager
 
         private void comboBoxOrderBy_SelectedIndexChanged(object sender, EventArgs e)
         {
-            if (listFilterCreatorScene != null&& listFilterCreatorScene.Count() > 0)
+            if (listFilterCreatorScene != null && listFilterCreatorScene.Count() > 0)
             {
                 GenerateItems();
             }

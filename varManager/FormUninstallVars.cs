@@ -251,7 +251,7 @@ namespace varManager
         private void dataGridViewVars_DataError(object sender, DataGridViewDataErrorEventArgs e)
         {
             ;
-             //e.Exception.Message
+            //e.Exception.Message
         }
 
         private void toolStripButtonPreviewLast_Click(object sender, EventArgs e)

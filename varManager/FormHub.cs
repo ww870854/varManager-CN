@@ -2,8 +2,6 @@
 using System;
 using System.Collections.Generic;
 using System.Drawing;
-using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Text;
 using System.Threading;
@@ -57,9 +55,9 @@ namespace varManager
         }
         private async void AllMissingDepends()
         {
-           
+
             this.BeginInvoke(addlog, new Object[] { "搜索依赖项...", LogLevel.INFO });
-           
+
             List<string> missingvars = form1.MissingDependencies();
             if (missingvars.Count > 0)
             {
@@ -152,7 +150,7 @@ namespace varManager
         {
             this.Enabled = false;
             this.UseWaitCursor = true;
-           if(!GetInfoList())
+            if (!GetInfoList())
             {
                 MessageBox.Show("获取HUB信息失败！");
                 this.Close();
@@ -217,7 +215,7 @@ namespace varManager
             this.Enabled = true;
             GenerateHabItems();
             EnableFilterEvent();
-            
+
         }
 
         private void Item_RetPackageName(object sender, PackageNameEventArgs e)
@@ -232,9 +230,9 @@ namespace varManager
             foreach (string varname in e.DownloadLinks.Keys)
             {
                 var exitname = form1.VarExistName(varname);
-                if (exitname == "missing"|| exitname.EndsWith("$"))
+                if (exitname == "missing" || exitname.EndsWith("$"))
                 {
-                    downloadUrls[varname] = e.DownloadLinks[varname] ;
+                    downloadUrls[varname] = e.DownloadLinks[varname];
                 }
             }
             DrawDownloadListView();
@@ -268,10 +266,10 @@ namespace varManager
 
         private void ClearFilter()
         {
-           // if (comboBoxHosted.Items.Contains("Hub And Dependencies"))
-           //     comboBoxHosted.SelectedItem = "Hub And Dependencies";
-           // else
-                comboBoxHosted.SelectedIndex = 0;
+            // if (comboBoxHosted.Items.Contains("Hub And Dependencies"))
+            //     comboBoxHosted.SelectedItem = "Hub And Dependencies";
+            // else
+            comboBoxHosted.SelectedIndex = 0;
 
             if (comboBoxPayType.Items.Contains("Free"))
                 comboBoxPayType.SelectedItem = "Free";
@@ -292,7 +290,7 @@ namespace varManager
         private void Item_ClickFilter(object sender, HubItemFilterEventArgs e)
         {
             DisableFilterEvent();
-            
+
             HubItem hubItem = sender as HubItem;
             if (e.FilterType == "category")
             {
@@ -327,7 +325,7 @@ namespace varManager
             string location = comboBoxHosted.Text, paytype = comboBoxPayType.Text,
              category = comboBoxCategory.Text, username = comboBoxCreator.Text,
                  tags = comboBoxTags.Text, search = textBoxSearch.Text;
-            if(search == "搜索...")
+            if (search == "搜索...")
             {
                 search = "";
             }
@@ -354,7 +352,7 @@ namespace varManager
             try
             {
                 string reponse = Task<int>.Run(GetInfo).Result;
-                if(string.IsNullOrEmpty(reponse)) return false;
+                if (string.IsNullOrEmpty(reponse)) return false;
                 JSONNode jsonResult = JSON.Parse(reponse);
                 JSONArray jArray = jsonResult["category"] as JSONArray;
                 listPayType = new List<string>();
@@ -394,7 +392,7 @@ namespace varManager
                 {
                     listCreator.Add(item);
                 }
-                success=true;
+                success = true;
             }
             catch (Exception)
             {
@@ -532,17 +530,17 @@ namespace varManager
             this.BeginInvoke(addlog, new Object[] { "搜索可升级Vars...", LogLevel.INFO });
             var reponse = await GetHubPackages();
             JSONClass jsonPackages = JSON.Parse(reponse) as JSONClass;
-            this.BeginInvoke(addlog, new Object[] { $"在HUB中总共找到{jsonPackages.Count}个软件包.", LogLevel.INFO }); 
+            this.BeginInvoke(addlog, new Object[] { $"在HUB中总共找到{jsonPackages.Count}个软件包.", LogLevel.INFO });
             Dictionary<string, PackVerDownID> hubPackages = new Dictionary<string, PackVerDownID>();
             foreach (string package in jsonPackages.Keys)
             {
-                string  packageIdenty = package;
+                string packageIdenty = package;
                 if (packageIdenty.EndsWith(".var"))
                     packageIdenty = packageIdenty.Substring(0, packageIdenty.Length - 4);
                 int splitindex = packageIdenty.LastIndexOf('.');
                 if (splitindex >= 0)
                 {
-                    string packageName= packageIdenty.Substring(0, splitindex);
+                    string packageName = packageIdenty.Substring(0, splitindex);
                     int version = -1;
                     int.TryParse(packageIdenty.Substring(splitindex + 1), out version);
                     if (hubPackages.ContainsKey(packageName))
@@ -550,7 +548,7 @@ namespace varManager
                         if (version > hubPackages[packageName].ver)
                         {
                             string downid = jsonPackages[package].Value;
-                            hubPackages[packageName]= new PackVerDownID(version, downid);
+                            hubPackages[packageName] = new PackVerDownID(version, downid);
                         }
                     }
                     else
@@ -560,7 +558,7 @@ namespace varManager
                     }
                 }
             }
-            List<string> toBeUpdVars= new List<string>(); 
+            List<string> toBeUpdVars = new List<string>();
             foreach (var hubpackage in hubPackages)
             {
                 string varlastname = form1.VarExistName(hubpackage.Key + ".latest");
@@ -615,7 +613,7 @@ namespace varManager
                     this.BeginInvoke(addlog, new Object[] { $"共找到 {downloadUrls.Count} 个可更新的下载链接", LogLevel.INFO });
                     ShowDownList();
                     DrawDownloadListView();
-                    
+
                 }
                 else
                 {
@@ -624,12 +622,12 @@ namespace varManager
             }
         }
 
-     
+
 
         private static async Task<string> GetHubPackages()
         {
             string url = "https://s3cdn.virtamate.com/data/packages.json";
-            
+
             using (var client = new HttpClient())
             {
                 var response = await client.GetAsync(url);
@@ -660,7 +658,7 @@ namespace varManager
 
         private void textBoxSearch_Enter(object sender, EventArgs e)
         {
-            if(textBoxSearch.Text=="搜索...")
+            if (textBoxSearch.Text == "搜索...")
             {
                 textBoxSearch.Text = "";
             }
@@ -669,7 +667,7 @@ namespace varManager
 
         private void textBoxSearch_Leave(object sender, EventArgs e)
         {
-            if (string.IsNullOrWhiteSpace(textBoxSearch.Text)||textBoxSearch.Text == "搜索...")
+            if (string.IsNullOrWhiteSpace(textBoxSearch.Text) || textBoxSearch.Text == "搜索...")
             {
                 textBoxSearch.Text = "搜索...";
                 textBoxSearch.ForeColor = SystemColors.GrayText;
@@ -698,7 +696,7 @@ namespace varManager
 
         private void buttonClose_Click(object sender, EventArgs e)
         {
-            this.Close(); 
+            this.Close();
         }
 
         private void FormHub_FormClosing(object sender, FormClosingEventArgs e)
@@ -729,7 +727,7 @@ namespace varManager
             comboBoxPages.Items.Clear();
             for (int i = 0; i < totalPages; i++)
             {
-                comboBoxPages.Items.Add($"{i + 1 } of {totalPages}");
+                comboBoxPages.Items.Add($"{i + 1} of {totalPages}");
             }
             if (comboBoxPages.Items.Count > 0)
                 comboBoxPages.SelectedIndex = curPage - 1;
@@ -744,7 +742,7 @@ namespace varManager
                 {
                     hubItem.Visible = true;
                     JSONClass resource = resources[index] as JSONClass;
-                    hubItem.SetResource(resource); 
+                    hubItem.SetResource(resource);
                     string inRepository = "Unknown Status";
                     if (resource.HasKey("hubFiles"))
                     {
@@ -766,7 +764,7 @@ namespace varManager
                                     string hubpackageName = filenameparts[0] + "." + filenameparts[1];
                                     int hubversion = 1;
                                     if (filenameparts.Length >= 3)
-                                        int.TryParse(filenameparts[2], out hubversion); 
+                                        int.TryParse(filenameparts[2], out hubversion);
                                     string varlastname = form1.VarExistName(hubpackageName + ".latest");
                                     if (varlastname != "missing")
                                     {
@@ -805,7 +803,7 @@ namespace varManager
                             inRepository = "Go To Download";
                         }
                     }
-                    hubItem.InRepository=inRepository;
+                    hubItem.InRepository = inRepository;
                     hubItem.RefreshItem();
                 }
                 else
