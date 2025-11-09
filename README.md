@@ -1,4 +1,4 @@
-# varManager
+# varManager 中文机翻版
 
 ## varManager
 
